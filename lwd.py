@@ -13,8 +13,9 @@ async def on_ready():
 	print("[Large Dog voice] I'm wet")
 
 twitter_check=re.compile(r"https?://(?:www\.)?(?:twitter|x)\.com(/\w+/status/\d+)")
-gdl_path = sp.check_output(["which", "gallery-dl"]).decode().strip()
-assert gdl_path != ""
+# gdl_path = sp.check_output(["/usr/bin/which", "gallery-dl"]).decode().strip()
+# assert gdl_path != ""
+gdl_path = "/home/james/.local/bin/gallery-dl"
 
 @bot.event
 async def on_message(message):
@@ -24,6 +25,7 @@ async def on_message(message):
 	await asyncio.sleep(3)
 	paths = [x[1] for x in twitter_check.finditer(message.content)]
 	for embed in map(lambda x: x.to_dict(), message.embeds):
+		print(embed)
 		embed_match = twitter_check.match(embed["url"])
 		if embed_match is None:
 			continue
@@ -42,6 +44,9 @@ async def on_message(message):
 	for path in paths:
 		replies.append(f"https://vxtwitter.com{path}")
 	if replies:
-		await message.reply(random.choice(["Discord fail!", "Twitter fail!", "Twitter (incorrectly known as X) fail!", "Embed fail!"])+"\n"+"\n".join(replies), mention_author=False)
+		if "||" in message.content or "`" in message.content:
+			await message.reply("It looks like there might be an embed fail but it might be behind a spoiler tag. I can't tell. You're on your own!", mention_author=False)
+		else:
+			await message.reply(random.choice(["Discord fail!", "Twitter fail!", "Twitter (incorrectly known as X) fail!", "Embed fail!"])+"\n"+"\n".join(replies), mention_author=False)
 
 bot.run(os.environ["bot_lwd"])
