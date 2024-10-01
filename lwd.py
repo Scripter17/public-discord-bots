@@ -25,7 +25,6 @@ async def on_message(message):
 	await asyncio.sleep(3)
 	paths = [x[1] for x in twitter_check.finditer(message.content)]
 	for embed in map(lambda x: x.to_dict(), message.embeds):
-		print(embed)
 		embed_match = twitter_check.match(embed["url"])
 		if embed_match is None:
 			continue
